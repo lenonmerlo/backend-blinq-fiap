@@ -28,7 +28,7 @@ public class App {
         System.out.println("Updated Email: " + client1.getEmail());
 
         Account acc1 = new Account(1L, "Blinq Bank", "0001", "12345-6", new BigDecimal("1500.00"));
-        Account acc2 = new Account(2L, "Other Bank", "0001", "99996-9", new BigDecimal("0.00"));
+        Account acc2 = new Account(2L, "Other Bank", "0001", "99999-9", new BigDecimal("0.00"));
 
         acc1.deposit(new BigDecimal("200.00"));
         acc1.withdraw(new BigDecimal("50.00"));
@@ -54,7 +54,7 @@ public class App {
         inv.addContribution(new BigDecimal("200.00"));
         inv.redeem(new BigDecimal("300.00"));
 
-        System.out.println("Investment product " + inv.getProductName());
+        System.out.println("Investment product: " + inv.getProductName());
         System.out.println("Annual rate: " + inv.getAnnualRate());
 
         Transaction t1 = new Transaction(1L, TransactionType.INCOME, new BigDecimal("5000.00"), "Salary");
@@ -62,7 +62,7 @@ public class App {
 
         t1.register();
         t2.register();
-        t2.register();
+        t2.reverse();
 
         System.out.println("t1 -> type: " + t1.getType() + ", amount: " + t1.getAmount());
         System.out.println("t2 -> type: " + t2.getType() + ", desc: " + t2.getDescription());

@@ -18,7 +18,8 @@ public class Investment {
     }
 
     public void applyYield() {
-        System.out.println("Applying yield for " + productName + " on amount " + " at annual rate " + annualRate);
+        System.out.println("Applying yield for " + productName +
+                " on amount " + amount + " at annual rate " + annualRate);
     }
 
     public void addContribution(BigDecimal value) {
