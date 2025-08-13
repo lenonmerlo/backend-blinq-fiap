@@ -1,7 +1,9 @@
 package com.fiap.fintech;
 
+import com.fiap.fintech.domain.Account;
 import com.fiap.fintech.domain.Client;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -25,5 +27,19 @@ public class App {
 
         client1.setEmail("newemail@example.com");
         System.out.println("Updated Email: " + client1.getEmail());
+
+        Account acc1 = new Account(1L, "Blinq Bank", "0001", "12345-6", new BigDecimal("1500.00"));
+        Account acc2 = new Account(2L, "Other Bank", "0001", "99996-9", new BigDecimal("0.00"));
+
+        acc1.deposit(new BigDecimal("200.00"));
+        acc1.withdraw(new BigDecimal("50.00"));
+        acc1.transfer(acc2, new BigDecimal("100.00"));
+
+        System.out.println("Account number: " + acc1.getNumber());
+        System.out.println(acc1.getBank());
     }
+
+
+
+
 }
