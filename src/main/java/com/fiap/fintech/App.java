@@ -2,6 +2,7 @@ package com.fiap.fintech;
 
 import com.fiap.fintech.domain.Account;
 import com.fiap.fintech.domain.Client;
+import com.fiap.fintech.domain.CreditCard;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -37,9 +38,16 @@ public class App {
 
         System.out.println("Account number: " + acc1.getNumber());
         System.out.println(acc1.getBank());
+
+        CreditCard card = new CreditCard(
+                1L, "Blinq Visa", "4111111111111111", 12, 2023, new BigDecimal("2500.00")
+        );
+        card.pay(new BigDecimal("89.90"), "Online purchase");
+        card.generateInvoice();
+        card.increaseLimit(new BigDecimal("500.00"));
+
+        System.out.println("Card label: " + card.getLabel());
+        System.out.println("Card limit: " + card.getLimitAmount());
+
     }
-
-
-
-
 }
