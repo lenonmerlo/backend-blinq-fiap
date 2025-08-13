@@ -1,4 +1,6 @@
-package domain;
+package com.fiap.fintech.domain;
 
-public class TransactionType {
+public enum TransactionType {
+    INCOME,
+    EXPENSE
 }

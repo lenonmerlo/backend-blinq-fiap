@@ -1,9 +1,6 @@
 package com.fiap.fintech;
 
-import com.fiap.fintech.domain.Account;
-import com.fiap.fintech.domain.Client;
-import com.fiap.fintech.domain.CreditCard;
-import com.fiap.fintech.domain.Investment;
+import com.fiap.fintech.domain.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -59,6 +56,16 @@ public class App {
 
         System.out.println("Investment product " + inv.getProductName());
         System.out.println("Annual rate: " + inv.getAnnualRate());
+
+        Transaction t1 = new Transaction(1L, TransactionType.INCOME, new BigDecimal("5000.00"), "Salary");
+        Transaction t2 = new Transaction(2L, TransactionType.EXPENSE, new BigDecimal("120.00"), "Groceries");
+
+        t1.register();
+        t2.register();
+        t2.register();
+
+        System.out.println("t1 -> type: " + t1.getType() + ", amount: " + t1.getAmount());
+        System.out.println("t2 -> type: " + t2.getType() + ", desc: " + t2.getDescription());
 
     }
 }
