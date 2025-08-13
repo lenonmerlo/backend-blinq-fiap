@@ -3,6 +3,7 @@ package com.fiap.fintech;
 import com.fiap.fintech.domain.Account;
 import com.fiap.fintech.domain.Client;
 import com.fiap.fintech.domain.CreditCard;
+import com.fiap.fintech.domain.Investment;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -48,6 +49,16 @@ public class App {
 
         System.out.println("Card label: " + card.getLabel());
         System.out.println("Card limit: " + card.getLimitAmount());
+
+        Investment inv = new Investment(
+                1L, "CDB 100% CDI", new BigDecimal("1000.00"), new BigDecimal("0.12")
+        );
+        inv.applyYield();
+        inv.addContribution(new BigDecimal("200.00"));
+        inv.redeem(new BigDecimal("300.00"));
+
+        System.out.println("Investment product " + inv.getProductName());
+        System.out.println("Annual rate: " + inv.getAnnualRate());
 
     }
 }
