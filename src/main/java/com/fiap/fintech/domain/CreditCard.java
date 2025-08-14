@@ -2,59 +2,36 @@ package com.fiap.fintech.domain;
 
 import java.math.BigDecimal;
 
-public class CreditCard {
-    private Long id;
-    private String label;
-    private String number;
+public class CreditCard extends PaymentMethod {
     private int expiryMonth;
     private int expiryYear;
     private BigDecimal limitAmount;
 
     public CreditCard() {}
 
+    public CreditCard(int expiryMonth, int expiryYear, BigDecimal limitAmount) {
+        this.expiryMonth = expiryMonth;
+        this.expiryYear = expiryYear;
+        this.limitAmount = limitAmount;
+    }
+
     public CreditCard(Long id, String label, String number, int expiryMonth, int expiryYear, BigDecimal limitAmount) {
-        this.id = id;
-        this.label = label;
-        this.number = number;
+        super(id, label, number);
         this.expiryMonth = expiryMonth;
         this.expiryYear = expiryYear;
         this.limitAmount = limitAmount;
     }
 
     public void pay(BigDecimal amount, String description) {
-        System.out.println("Paying " + amount + " with card " + label + ": " + description);
+        System.out.println("Paying " + amount + " with card " + getLabel() + ": " + description);
     }
 
     public void generateInvoice() {
-        System.out.println("Generating invoice for card: " + label);
+        System.out.println("Generating invoice for card: " + getLabel());
     }
 
     public void increaseLimit(BigDecimal amount) {
-        System.out.println("Requesting limit increase of " + amount + " for card: " + label);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
+        System.out.println("Requesting limit increase of " + amount + " for card: " + getLabel());
     }
 
     public int getExpiryMonth() {
@@ -81,3 +58,4 @@ public class CreditCard {
         this.limitAmount = limitAmount;
     }
 }
+
