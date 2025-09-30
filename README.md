@@ -1,135 +1,129 @@
-# Fintech (FIAP) — Java/Maven
+# Fintech (FIAP) — Java/Maven + Oracle
 
 ## 🇧🇷 PT-BR
 
-Projeto acadêmico em **Java puro** (sem Spring) para modelar as principais entidades de um sistema *Fintech*.
-Os métodos exigidos pela atividade **apenas imprimem mensagens** com `System.out.println`, sem regras de negócio.
+Projeto acadêmico em **Java puro** (sem Spring) com **Maven**, integrando ao **Oracle Database (instância FIAP)**.  
+Atividade da disciplina: **Exibir e Cadastrar informações de uma listagem do Fintech, agora com banco de dados**.
+
+---
 
 ### ✅ Requisitos
-- **Java JDK** 21 (ou 17+)
+- **Java JDK** 17+ (recomendado: 21)
 - **Maven** 3.8+
-- IntelliJ IDEA (recomendado)
+- **IntelliJ IDEA** (recomendado)
+- **Oracle SQL Developer** (para executar o DDL e validar inserts/selects)
+
+---
 
 ### 🧱 Estrutura do Projeto
 ```
 fintech/
 ├─ pom.xml
-└─ src/
-   └─ main/
-      └─ java/
-         └─ com/fiap/fintech/
-            ├─ App.java
-            └─ domain/
-               ├─ Account.java
-               ├─ Client.java
-               ├─ CreditCard.java
-               ├─ Investment.java
-               ├─ Transaction.java
-               └─ TransactionType.java
+├─ src/
+│  └─ main/
+│     ├─ java/com/fiap/fintech/
+│     │  ├─ App.java
+│     │  ├─ factory/ConnectionFactory.java
+│     │  ├─ dao/
+│     │  │   ├─ ExpenseDAO.java
+│     │  │   ├─ IncomeDAO.java
+│     │  │   └─ InvestmentDAO.java
+│     │  ├─ domain/
+│     │  │   ├─ Expense.java
+│     │  │   ├─ Income.java
+│     │  │   ├─ Investment.java
+│     │  │   ├─ Account.java
+│     │  │   ├─ Client.java
+│     │  │   ├─ CreditCard.java
+│     │  │   ├─ Transaction.java
+│     │  │   └─ TransactionType.java
+│     └─ resources/db.properties
+└─ test/
+   └─ java/com/fiap/fintech/
+      ├─ TestExpenseDAO.java
+      ├─ TestIncomeDAO.java
+      └─ TestInvestmentDAO.java
 ```
+
+---
+
+### ⚙️ Configuração do Banco
+O arquivo `src/main/resources/db.properties` contém:
+```
+db.url=jdbc:oracle:thin:@//oracle.fiap.com.br:1521/ORCL
+db.user=SEU_USUARIO
+db.password=SUA_SENHA
+```
+
+- Execute o DDL exportado do **Oracle Data Modeler** no **SQL Developer**.
+- Certifique-se de que as tabelas (`GASTO`, `RECEBIMENTO`, `INVESTIMENTO`, etc.) estejam criadas.
+
+---
 
 ### ▶️ Como executar
 **Via IntelliJ**
-1. Abra o projeto (Maven) no IntelliJ.
-2. Navegue até `src/main/java/com/fiap/fintech/App.java`.
-3. Clique em **Run** ▶️ para executar o `main`.
+1. Abra o projeto (Maven).
+2. Execute uma das classes de teste:
+  - `TestExpenseDAO`
+  - `TestIncomeDAO`
+  - `TestInvestmentDAO`
 
 **Via Maven (terminal)**
 ```bash
 mvn clean compile
-mvn exec:java
+mvn exec:java -Dexec.mainClass=com.fiap.fintech.TestExpenseDAO
 ```
-> O `pom.xml` já está configurado para rodar `com.fiap.fintech.App` com o `exec-maven-plugin`.
+(substitua pelo teste desejado)
 
-### 🧩 Classes implementadas
-- **Client**
-  - **Atributos:** `id`, `fullName`, `cpf`, `email`, `registrationDate`
-  - **Métodos:** `updateProfile()`, `activate()`, `deactivate()`
-- **Account**
-  - **Atributos:** `id`, `bank`, `branch`, `number`, `balance`
-  - **Métodos:** `deposit(amount)`, `withdraw(amount)`, `transfer(destination, amount)`
-- **CreditCard**
-  - **Atributos:** `id`, `label`, `number`, `expiryMonth`, `expiryYear`, `limitAmount`
-  - **Métodos:** `pay(amount, description)`, `generateInvoice()`, `increaseLimit(amount)`
-- **Investment**
-  - **Atributos:** `id`, `productName`, `amount`, `annualRate`
-  - **Métodos:** `applyYield()`, `addContribution(value)`, `redeem(value)`
-- **Transaction**
-  - **Atributos:** `id`, `type (enum)`, `amount`, `description`, `createdAt`
-  - **Métodos:** `register()`, `reverse()`
-- **TransactionType (enum):** `INCOME`, `EXPENSE`
+---
 
-> Observação: os métodos **não** implementam lógica financeira; exibem mensagens descritivas por exigência da atividade.
+### 🧩 Funcionalidades implementadas
+- **DAO** para acesso ao banco Oracle.
+  - `insert()` → cadastra no banco.
+  - `getAll()` → consulta e retorna lista de objetos.
+- **Tratamento de exceções** com `try-catch`.
+- **Testes** (`TestExpenseDAO`, `TestIncomeDAO`, `TestInvestmentDAO`) que:
+  - Inserem 5 registros em cada entidade.
+  - Consultam todos os registros e exibem no console.
+
+---
 
 ### 📦 Como exportar para entrega (ZIP – FIAP)
-1. No IntelliJ, clique com o botão direito no **nome do projeto** → **Open in → Explorer**.
-2. **Compacte a pasta do projeto inteira** (incluindo `pom.xml`) em **.zip**.
-3. Envie o `.zip` na plataforma conforme instruções do enunciado.
+1. No IntelliJ: `File > Export > Project to ZIP...`  
+   (ou comprima manualmente a pasta do projeto incluindo `pom.xml` e `src/`).
+2. Nomeie o arquivo como **GRUPO_XX.zip** (ou RM se individual).
+3. Envie o `.zip` na plataforma FIAP ON.
 
 ---
 
 ## 🇺🇸 EN
 
-Academic project in **plain Java** (no Spring) modeling core *Fintech* entities.
-Per assignment rules, all methods **only print messages** using `System.out.println`—no business logic.
+Academic project in **plain Java** with **Maven**, integrated with **Oracle Database (FIAP instance)**.  
+Assignment: **List, Insert and Retrieve Fintech entities using a database connection**.
 
 ### ✅ Requirements
-- **Java JDK** 21 (or 17+)
+- **Java JDK** 17+ (recommended: 21)
 - **Maven** 3.8+
-- IntelliJ IDEA (recommended)
-
-### 🧱 Project Structure
-```
-fintech/
-├─ pom.xml
-└─ src/
-   └─ main/
-      └─ java/
-         └─ com/fiap/fintech/
-            ├─ App.java
-            └─ domain/
-               ├─ Account.java
-               ├─ Client.java
-               ├─ CreditCard.java
-               ├─ Investment.java
-               ├─ Transaction.java
-               └─ TransactionType.java
-```
+- **IntelliJ IDEA** (recommended)
+- **Oracle SQL Developer** (to run DDL and validate inserts/selects)
 
 ### ▶️ How to run
 **Using IntelliJ**
-1. Open the Maven project in IntelliJ.
-2. Go to `src/main/java/com/fiap/fintech/App.java`.
-3. Click **Run** ▶️ to execute the `main` method.
+1. Open the Maven project.
+2. Run one of the test classes:
+  - `TestExpenseDAO`
+  - `TestIncomeDAO`
+  - `TestInvestmentDAO`
 
 **Using Maven (terminal)**
 ```bash
 mvn clean compile
-mvn exec:java
+mvn exec:java -Dexec.mainClass=com.fiap.fintech.TestExpenseDAO
 ```
-> `pom.xml` is already configured with `exec-maven-plugin` to run `com.fiap.fintech.App`.
 
-### 🧩 Implemented Classes
-- **Client**
-  - **Fields:** `id`, `fullName`, `cpf`, `email`, `registrationDate`
-  - **Methods:** `updateProfile()`, `activate()`, `deactivate()`
-- **Account**
-  - **Fields:** `id`, `bank`, `branch`, `number`, `balance`
-  - **Methods:** `deposit(amount)`, `withdraw(amount)`, `transfer(destination, amount)`
-- **CreditCard**
-  - **Fields:** `id`, `label`, `number`, `expiryMonth`, `expiryYear`, `limitAmount`
-  - **Methods:** `pay(amount, description)`, `generateInvoice()`, `increaseLimit(amount)`
-- **Investment**
-  - **Fields:** `id`, `productName`, `amount`, `annualRate`
-  - **Methods:** `applyYield()`, `addContribution(value)`, `redeem(value)`
-- **Transaction**
-  - **Fields:** `id`, `type (enum)`, `amount`, `description`, `createdAt`
-  - **Methods:** `register()`, `reverse()`
-- **TransactionType (enum):** `INCOME`, `EXPENSE`
+### 🧩 Implemented Features
+- **DAO classes** with `insert()` and `getAll()`
+- **Exception handling** with `try-catch`
+- **Tests** inserting 5 records per entity and retrieving them back
 
-> Note: methods **do not** implement business rules; they print descriptive messages as required by the assignment.
-
-### 📦 Packaging for submission (ZIP)
-1. In IntelliJ, right-click the **project name** → **Open in → Explorer**.
-2. **Zip the entire project folder** (including `pom.xml`) into a **.zip** file.
-3. Submit the `.zip` on the platform per assignment instructions.
+---
