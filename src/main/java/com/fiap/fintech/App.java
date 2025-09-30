@@ -48,8 +48,14 @@ public class App {
         System.out.println("Card limit: " + card.getLimitAmount());
 
         Investment inv = new Investment(
-                1L, "CDB 100% CDI", new BigDecimal("1000.00"), new BigDecimal("0.12")
+                1L,
+                LocalDate.now(),
+                new BigDecimal("1000.00"),
+                new BigDecimal("0.12"),
+                12,
+                "CDB 100% CDI"
         );
+
         inv.applyYield();
         inv.addContribution(new BigDecimal("200.00"));
         inv.redeem(new BigDecimal("300.00"));
