@@ -1,40 +1,115 @@
+############################
+# Build / Maven
+############################
 target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# relatórios de testes
+**/surefire-reports/
+**/failsafe-reports/
+# jacoco / cobertura
+**/jacoco*.exec
+**/target/site/jacoco/
 
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
+############################
+# IDEs
+############################
+# IntelliJ IDEA
+.idea/
 *.iml
 *.ipr
+*.iws
+out/
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
+# Eclipse / Spring Tools
 .project
-.settings
+.classpath
+.settings/
 .springBeans
-.sts4-cache
+.apt_generated/
+.sts4-cache/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
 
-### VS Code ###
+# VS Code
 .vscode/
 
-### Mac OS ###
+############################
+# SO / Arquivos temporários
+############################
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
 
-src/main/java/com/fiap/fintech/legacy/db.properties
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux / gerais
+*~
+.fuse_hidden*
+.nfs*
+*.swp
+*.swo
+
+############################
+# Logs e dumps
+############################
+logs/
+*.log
+*.log.*
+*.out
+*.err
+spring.log
+hs_err_pid*
+replay_pid*
+
+############################
+# Env / Segredos locais
+############################
+.env
+.env.*
+*.env.local
+*.local
+*.secret
+*.secrets
+*.key
+*.keystore
+*.jks
+*.p12
+
+# perfis/arquivos de config locais (opcional, ajuste ao seu fluxo)
+application-local.yml
+application-local.yaml
+application-*.local.yml
+application-*.local.yaml
+# se você guardar credenciais fora do padrão:
+**/*-secrets.yml
+**/*-secrets.yaml
+
+############################
+# Artefatos diversos
+############################
+# arquivos de backup
+*.bak
+*.orig
+*.rej
+
+# arquivos de lock temporários
+*.lock
+
+############################
+# Projeto atual (legado/JDBC)
+############################
+# manter fora do classpath do Spring:
+src/main/java/**/legacy/
+src/main/resources/**/legacy/
+# caso ainda exista um db.properties legado, ignore-o:
+**/legacy/db.properties
