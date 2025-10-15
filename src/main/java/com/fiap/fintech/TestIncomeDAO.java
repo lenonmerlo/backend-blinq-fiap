@@ -12,11 +12,11 @@ public class TestIncomeDAO {
         IncomeDAO dao = new IncomeDAO();
 
         // --- INSERT de 5 registros ---
-        dao.insert(new Income(106L, LocalDate.now(), new BigDecimal("5000.00"), "Salary", "Company A"));
-        dao.insert(new Income(107L, LocalDate.now().minusDays(1), new BigDecimal("150.00"), "Freelance work", "Client B"));
-        dao.insert(new Income(108L, LocalDate.now().minusDays(2), new BigDecimal("200.00"), "Gift", "Friend"));
-        dao.insert(new Income(109L, LocalDate.now().minusDays(3), new BigDecimal("50.00"), "Dividend", "Brokerage"));
-        dao.insert(new Income(110L, LocalDate.now().minusDays(4), new BigDecimal("1200.00"), "Bonus", "Company A"));
+        dao.insert(new Income(116L, LocalDate.now(), new BigDecimal("5000.00"), "Salary", "Company A"));
+        dao.insert(new Income(117L, LocalDate.now().minusDays(1), new BigDecimal("150.00"), "Freelance work", "Client B"));
+        dao.insert(new Income(118L, LocalDate.now().minusDays(2), new BigDecimal("200.00"), "Gift", "Friend"));
+        dao.insert(new Income(119L, LocalDate.now().minusDays(3), new BigDecimal("50.00"), "Dividend", "Brokerage"));
+        dao.insert(new Income(120L, LocalDate.now().minusDays(4), new BigDecimal("1200.00"), "Bonus", "Company A"));
 
         // --- SELECT ALL ---
         List<Income> all = dao.getAll();

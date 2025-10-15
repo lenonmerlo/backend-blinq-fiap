@@ -9,7 +9,7 @@ import java.util.Properties;
 
 public class ConnectionFactory {
 
-    private static final String PROPERTIES_FILE = "/db.properties";
+    private static final String PROPERTIES_FILE = "/com/fiap/fintech/legacy/db.properties";
 
     private static final String url;
     private static final String user;
