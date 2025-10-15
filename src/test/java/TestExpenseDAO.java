@@ -1,5 +1,3 @@
-package com.fiap.fintech;
-
 import com.fiap.fintech.dao.ExpenseDAO;
 import com.fiap.fintech.domain.Expense;
 

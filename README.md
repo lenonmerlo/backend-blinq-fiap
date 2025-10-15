@@ -71,7 +71,7 @@ db.password=SUA_SENHA
 **Via Maven (terminal)**
 ```bash
 mvn clean compile
-mvn exec:java -Dexec.mainClass=com.fiap.fintech.TestExpenseDAO
+mvn exec:java -Dexec.mainClass=TestExpenseDAO
 ```
 (substitua pelo teste desejado)
 
@@ -118,7 +118,7 @@ Assignment: **List, Insert and Retrieve Fintech entities using a database connec
 **Using Maven (terminal)**
 ```bash
 mvn clean compile
-mvn exec:java -Dexec.mainClass=com.fiap.fintech.TestExpenseDAO
+mvn exec:java -Dexec.mainClass=TestExpenseDAO
 ```
 
 ### 🧩 Implemented Features

@@ -1,5 +1,3 @@
-package com.fiap.fintech;
-
 import com.fiap.fintech.factory.ConnectionFactory;
 
 import java.sql.Connection;

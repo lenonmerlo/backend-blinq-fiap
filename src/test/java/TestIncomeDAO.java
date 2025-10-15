@@ -1,5 +1,3 @@
-package com.fiap.fintech;
-
 import com.fiap.fintech.dao.IncomeDAO;
 import com.fiap.fintech.domain.Income;
 

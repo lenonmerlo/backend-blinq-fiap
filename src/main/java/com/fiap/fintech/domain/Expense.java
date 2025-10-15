@@ -1,15 +1,43 @@
 package com.fiap.fintech.domain;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Entity
+@Table(name = "GASTO")
+@SequenceGenerator(
+        name = "GASTO_SEQ_GEN",
+        sequenceName = "GASTO_SEQ",
+        allocationSize = 1
+)
 public class Expense {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GASTO_SEQ_GEN")
+    @Column(name = "ID_GASTO", nullable = false)
     private Long id;
+
+    @NotNull
+    @Column(name = "DATA_GASTO", nullable = false)
     private LocalDate date;
+
+    @NotNull
+    @Digits(integer = 10, fraction = 2)
+    @DecimalMin("0.01")
+    @Column(name = "VALOR", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
+
+    @NotBlank
+    @Lob
+    @Column(name = "DESCRICAO", nullable = false, columnDefinition = "CLOB")
     private String description;
+
+    @NotBlank
+    @Size(max = 30)
+    @Column(name = "FORMA_PAGAMENTO", nullable = false, length = 30)
     private String paymentMethod;
 
     public Expense() {}
@@ -22,46 +50,20 @@ public class Expense {
         this.paymentMethod = paymentMethod;
     }
 
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public LocalDate getDate() { return date; }
+    public void setDate(LocalDate date) { this.date = date; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
 
-    public LocalDate getDate() {
-        return date;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
 
     @Override
     public String toString() {
