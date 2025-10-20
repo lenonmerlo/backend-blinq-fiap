@@ -1,83 +1,60 @@
 package com.fiap.fintech.domain;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Entity
+@Table(name = "INVESTIMENTO")
+@SequenceGenerator(name = "INVESTIMENTO_SEQ_GEN", sequenceName = "INVESTIMENTO_SEQ", allocationSize = 1)
 public class Investment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "INVESTIMENTO_SEQ_GEN")
+    @Column(name = "ID_INVESTIMENTO", nullable = false)
     private Long id;
+
+    @NotNull
+    @Column(name = "DATA_APLICACAO", nullable = false) // ajuste se preciso
     private LocalDate applicationDate;
-    private BigDecimal amount;
+
+    @NotNull @Digits(integer = 15, fraction = 2) @DecimalMin("0.01")
+    @Column(name = "VALOR_APLICADO", nullable = false, precision = 10, scale = 2)
+    private BigDecimal amountApplied;
+
+    @NotNull @Digits(integer = 4, fraction = 4) @DecimalMin("0.0001")
+    @Column(name = "TAXA_ANUAL", nullable = false, precision = 5, scale = 2)
     private BigDecimal annualRate;
-    private Integer term;
-    private String productName;
 
-    public Investment() {}
+    @NotNull @Min(1)
+    @Column(name = "PRAZO_MESES", nullable = false)
+    private Integer months;
 
-    public Investment(Long id, LocalDate applicationDate, BigDecimal amount,
-                      BigDecimal annualRate, Integer term, String productName) {
-        this.id = id;
-        this.applicationDate = applicationDate;
-        this.amount = amount;
-        this.annualRate = annualRate;
-        this.term = term;
-        this.productName = productName;
+    @NotBlank @Size(max = 80)
+    @Column(name = "PRODUTO", nullable = false, length = 80)
+    private String product;
+
+    public Investment(){}
+
+    public Investment(Long id, LocalDate applicationDate, BigDecimal amountApplied, BigDecimal annualRate, Integer months, String product) {
+        this.id=id; this.applicationDate=applicationDate; this.amountApplied=amountApplied; this.annualRate=annualRate; this.months=months; this.product=product;
     }
 
-    public void applyYield() {
-        System.out.println("Aplicando rendimento para " + productName +
-                " - valor " + amount + " à taxa " + annualRate);
-    }
+    public Long getId(){ return id; }
+    public void setId(Long id){ this.id = id; }
+    public LocalDate getApplicationDate(){ return applicationDate; }
+    public void setApplicationDate(LocalDate applicationDate){ this.applicationDate = applicationDate; }
+    public BigDecimal getAmountApplied(){ return amountApplied; }
+    public void setAmountApplied(BigDecimal amountApplied){ this.amountApplied = amountApplied; }
+    public BigDecimal getAnnualRate(){ return annualRate; }
+    public void setAnnualRate(BigDecimal annualRate){ this.annualRate = annualRate; }
+    public Integer getMonths(){ return months; }
+    public void setMonths(Integer months){ this.months = months; }
+    public String getProduct(){ return product; }
+    public void setProduct(String product){ this.product = product; }
 
-    public void addContribution(BigDecimal value) {
-        System.out.println("Adicionando " + value + " ao investimento " + productName);
-        this.amount = this.amount.add(value);
-    }
-
-    public void redeem(BigDecimal value) {
-        System.out.println("Resgatando " + value + " do investimento " + productName);
-        this.amount = this.amount.subtract(value);
-    }
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public LocalDate getApplicationDate() { return applicationDate; }
-    public void setApplicationDate(LocalDate applicationDate) { this.applicationDate = applicationDate; }
-
-    public BigDecimal getAmount() { return amount; }
-    public void setAmount(BigDecimal amount) { this.amount = amount; }
-
-    public BigDecimal getAnnualRate() { return annualRate; }
-    public void setAnnualRate(BigDecimal annualRate) { this.annualRate = annualRate; }
-
-    public Integer getTerm() { return term; }
-    public void setTerm(Integer term) { this.term = term; }
-
-    public String getProductName() { return productName; }
-    public void setProductName(String productName) { this.productName = productName; }
-
-    @Override
-    public String toString() {
-        return "Investment{" +
-                "id=" + id +
-                ", applicationDate=" + applicationDate +
-                ", amount=" + amount +
-                ", annualRate=" + annualRate +
-                ", term=" + term +
-                ", productName='" + productName + '\'' +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Investment that)) return false;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+    @Override public boolean equals(Object o){ if(this==o) return true; if(!(o instanceof Investment i)) return false; return Objects.equals(id,i.id); }
+    @Override public int hashCode(){ return Objects.hash(id); }
 }
