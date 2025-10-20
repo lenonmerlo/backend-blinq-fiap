@@ -1,26 +1,31 @@
 package com.fiap.fintech.service;
 
 import com.fiap.fintech.domain.User;
-import com.fiap.fintech.dto.*;
+import com.fiap.fintech.dto.ChangePasswordRequest;
+import com.fiap.fintech.dto.UserCreateRequest;
+import com.fiap.fintech.dto.UserDTO;
+import com.fiap.fintech.dto.UserUpdateRequest;
 import com.fiap.fintech.repository.UserRepository;
 import org.springframework.data.domain.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 @Service
 public class UserService {
 
     private final UserRepository repo;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository repo) { this.repo = repo; }
+    public UserService(UserRepository repo, PasswordEncoder passwordEncoder) {
+        this.repo = repo;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public Page<UserDTO> list(int page, int size) {
-        return repo.findAll(PageRequest.of(page, size, Sort.by("id")
-                        .ascending())).map(this::toDTO);
+        var pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        return repo.findAll(pageable).map(this::toDTO);
     }
 
     public UserDTO get(Long id) {
@@ -28,56 +33,66 @@ public class UserService {
     }
 
     public UserDTO create(UserCreateRequest req) {
-        if (repo.existsByUsername(req.username())) {
-            throw new IllegalStateException("USERNAME_JA_EXISTE");
-        }
-        User u = new User();
+        // unicidade
+        if (repo.existsByUsername(req.username()))
+            throw new IllegalStateException("Username já em uso");
+        if (repo.existsByEmail(req.email()))
+            throw new IllegalStateException("E-mail já em uso");
+
+        // montar entidade
+        var u = new User();
         u.setUsername(req.username());
-        u.setPasswordHash(sha256(req.password()));
-        u.setStatus(req.status());
-        u.setCreatedAt(LocalDateTime.now());
-        u = repo.save(u);
-        return toDTO(u);
+        u.setEmail(req.email());
+        u.setPasswordHash(passwordEncoder.encode(req.password()));
+        // status/timestamps serão garantidos pelo @PrePersist da entidade
+        u.setStatus((req.status() == null || req.status().isBlank()) ? "ATIVO" : req.status());
+
+        return toDTO(repo.save(u));
     }
 
     public UserDTO update(Long id, UserUpdateRequest req) {
-        User u = find(id);
-        if (!u.getUsername().equals(req.username()) && repo.existsByUsername(req.username())) {
-            throw new IllegalStateException("USERNAME_JA_EXISTE");
-        }
+        var u = find(id);
+
+        // checar unicidade somente se mudou
+        if (!u.getUsername().equals(req.username()) && repo.existsByUsername(req.username()))
+            throw new IllegalStateException("Username já em uso");
+
+        if (!u.getEmail().equals(req.email()) && repo.existsByEmail(req.email()))
+            throw new IllegalStateException("E-mail já em uso");
+
         u.setUsername(req.username());
-        u.setStatus(req.status());
+        u.setEmail(req.email());
+        u.setStatus((req.status() == null || req.status().isBlank()) ? u.getStatus() : req.status());
+
         return toDTO(repo.save(u));
     }
 
     public void changePassword(Long id, ChangePasswordRequest req) {
-        User u = find(id);
-        u.setPasswordHash(sha256(req.newPassword()));
+        var u = find(id);
+        u.setPasswordHash(passwordEncoder.encode(req.newPassword()));
         repo.save(u);
     }
 
     public void delete(Long id) {
-        if (!repo.existsById(id)) throw new NoSuchElementException("USUARIO_NAO_ENCONTRADO");
+        if (!repo.existsById(id))
+            throw new NoSuchElementException("USUARIO_NAO_ENCONTRADO");
         repo.deleteById(id);
     }
 
-    private User find(Long id) {
-        return repo.findById(id).orElseThrow(() -> new NoSuchElementException("USUARIO_NAO_ENCONTRADO"));
-    }
+    // ===== helpers =====
 
-    private String sha256(String s) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] digest = md.digest(s.getBytes(StandardCharsets.UTF_8));
-            StringBuilder sb = new StringBuilder();
-            for (byte b : digest) sb.append(String.format("%02x", b));
-            return sb.toString();
-        } catch (Exception e) {
-            throw new RuntimeException("HASH_ERROR", e);
-        }
+    private User find(Long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("USUARIO_NAO_ENCONTRADO"));
     }
 
     private UserDTO toDTO(User u) {
-        return new UserDTO(u.getId(), u.getUsername(), u.getStatus(), u.getCreatedAt(), u.getLastLogin());
+        return new UserDTO(
+                u.getId(),
+                u.getUsername(),
+                u.getStatus(),
+                u.getCreatedAt(),
+                u.getLastLogin()
+        );
     }
 }

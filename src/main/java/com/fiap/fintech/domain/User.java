@@ -1,33 +1,51 @@
 package com.fiap.fintech.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "USUARIO")
-@SequenceGenerator(name = "USUARIO_SEQ_GEN", sequenceName = "USUARIO_SEQ", allocationSize = 1)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USUARIO_SEQ_GEN")
-    @Column(name = "ID_USUARIO", nullable = false)
+    @SequenceGenerator(name = "USUARIO_SEQ_GEN", sequenceName = "USUARIO_SEQ", allocationSize = 1)
+    @Column(name = "ID_USUARIO")
     private Long id;
 
-    @Column(name = "USERNAME", nullable = false, length = 80, unique = true)
+    @NotBlank
+    @Size(max = 50)
+    @Column(name = "USERNAME", nullable = false, unique = true, length = 50)
     private String username;
 
-    @Column(name = "SENHA_HASH", nullable = false, length = 128)
+    @NotBlank @Email
+    @Size(max = 100)
+    @Column(name = "EMAIL", nullable = false, unique = true, length = 100)
+    private String email;
+
+    @NotBlank
+    @Column(name = "SENHA_HASH", nullable = false, length = 100)
     private String passwordHash;
 
     @Column(name = "STATUS", nullable = false, length = 20)
-    private String status;
+    private String status; // "ATIVO" | "INATIVO"
 
     @Column(name = "DATA_CRIACAO", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "ULTIMO_LOGIN")
+    @Column(name = "ULTIMO_LOGIN", nullable = false)
     private LocalDateTime lastLogin;
+
+    @PrePersist
+    void prePersist() {
+        if (createdAt == null) createdAt = LocalDateTime.now();
+        if (lastLogin == null) lastLogin = createdAt;
+        if (status == null || status.isBlank()) status = "ATIVO";
+    }
 
     public Long getId() {
         return id;
@@ -43,6 +61,14 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPasswordHash() {
