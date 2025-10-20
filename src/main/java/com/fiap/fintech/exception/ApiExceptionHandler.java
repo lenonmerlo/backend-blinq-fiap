@@ -2,6 +2,7 @@ package com.fiap.fintech.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -12,71 +13,77 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
-    // 400 - Bad Request (validação bean validation)
+    // 400 - Bean Validation (body válido mas campos inválidos)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String,Object>> validation(MethodArgumentNotValidException ex, HttpServletRequest req) {
+    public ResponseEntity<ApiError> validation(MethodArgumentNotValidException ex, HttpServletRequest req) {
         String msg = ex.getBindingResult().getFieldErrors().stream()
                 .map(err -> err.getField() + ": " + err.getDefaultMessage())
                 .findFirst().orElse("Dados inválidos");
-        return body(400, "Bad Request", msg, req.getRequestURI());
+        return of(HttpStatus.BAD_REQUEST, msg, req.getRequestURI());
     }
 
-    // 400 - Body inválido / JSON malformado
+    // 400 - Body inválido / JSON malformado / parâmetro obrigatório ausente
     @ExceptionHandler({ HttpMessageNotReadableException.class, MissingServletRequestParameterException.class })
-    public ResponseEntity<Map<String,Object>> badRequest(Exception ex, HttpServletRequest req) {
-        return body(400, "Bad Request", "Requisição inválida ou corpo malformado.", req.getRequestURI());
+    public ResponseEntity<ApiError> badRequest(Exception ex, HttpServletRequest req) {
+        return of(HttpStatus.BAD_REQUEST, "Requisição inválida ou corpo malformado.", req.getRequestURI());
     }
 
     // 404 - Not Found
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<Map<String,Object>> notFound(NoSuchElementException ex, HttpServletRequest req) {
-        return body(404, "Not Found", ex.getMessage(), req.getRequestURI());
+    public ResponseEntity<ApiError> handleNotFound(NoSuchElementException ex, HttpServletRequest req) {
+        return of(HttpStatus.NOT_FOUND, ex.getMessage(), req.getRequestURI());
     }
 
     // 405 - Method Not Allowed
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<Map<String,Object>> methodNotAllowed(HttpRequestMethodNotSupportedException ex, HttpServletRequest req) {
-        return body(405, "Method Not Allowed", "Método não suportado para este recurso.", req.getRequestURI());
+    public ResponseEntity<ApiError> methodNotAllowed(HttpRequestMethodNotSupportedException ex, HttpServletRequest req) {
+        return of(HttpStatus.METHOD_NOT_ALLOWED, "Método não suportado para este recurso.", req.getRequestURI());
     }
 
-    // 409 - Conflict (violação de FK/único, etc.)
+    // 409 - Conflict (constraints de banco / unique / FK etc.)
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Map<String,Object>> conflict(DataIntegrityViolationException ex, HttpServletRequest req) {
-        return body(409, "Conflict", "Violação de integridade de dados.", req.getRequestURI());
+    public ResponseEntity<ApiError> conflict(DataIntegrityViolationException ex, HttpServletRequest req) {
+        return of(HttpStatus.CONFLICT, "Violação de integridade de dados.", req.getRequestURI());
+    }
+
+    // 409 - Conflict (regras de negócio, ex.: username já existe)
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiError> handleConflict(IllegalStateException ex, HttpServletRequest req) {
+        return of(HttpStatus.CONFLICT, ex.getMessage(), req.getRequestURI());
+    }
+
+    // 400 - Bad Request (regras simples de domínio/validação manual)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiError> handleBadRequest(IllegalArgumentException ex, HttpServletRequest req) {
+        return of(HttpStatus.BAD_REQUEST, ex.getMessage(), req.getRequestURI());
     }
 
     // 415 - Unsupported Media Type
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<Map<String,Object>> unsupported(HttpMediaTypeNotSupportedException ex, HttpServletRequest req) {
-        return body(415, "Unsupported Media Type", "Content-Type não suportado.", req.getRequestURI());
-    }
-
-    // 422 - Unprocessable Entity (regras de negócio)
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String,Object>> unprocessable(IllegalArgumentException ex, HttpServletRequest req) {
-        return body(422, "Unprocessable Entity", ex.getMessage(), req.getRequestURI());
+    public ResponseEntity<ApiError> unsupported(HttpMediaTypeNotSupportedException ex, HttpServletRequest req) {
+        return of(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Content-Type não suportado.", req.getRequestURI());
     }
 
     // 500 - Fallback
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String,Object>> generic(Exception ex, HttpServletRequest req) {
-        return body(500, "Internal Server Error", "Erro inesperado.", req.getRequestURI());
+    public ResponseEntity<ApiError> generic(Exception ex, HttpServletRequest req) {
+        return of(HttpStatus.INTERNAL_SERVER_ERROR, "Erro inesperado.", req.getRequestURI());
     }
 
-    private ResponseEntity<Map<String,Object>> body(int status, String error, String message, String path) {
-        Map<String,Object> m = new LinkedHashMap<>();
-        m.put("timestamp", Instant.now().toString());
-        m.put("status", status);
-        m.put("error", error);
-        m.put("message", message);
-        m.put("path", path);
-        return ResponseEntity.status(status).body(m);
+    // Helper centralizado
+    private ResponseEntity<ApiError> of(HttpStatus status, String message, String path) {
+        ApiError body = new ApiError(
+                Instant.now().toString(),
+                status.value(),
+                status.getReasonPhrase(),
+                message,
+                path
+        );
+        return ResponseEntity.status(status).body(body);
     }
 }
