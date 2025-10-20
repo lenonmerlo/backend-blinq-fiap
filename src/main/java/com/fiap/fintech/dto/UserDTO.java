@@ -1,4 +1,10 @@
 package com.fiap.fintech.dto;
 
-public record UserDTO() {
+import java.time.LocalDateTime;
+
+public record UserDTO(Long id,
+                      String username,
+                      String status,
+                      LocalDateTime createAt,
+                      LocalDateTime lastLogin) {
 }
