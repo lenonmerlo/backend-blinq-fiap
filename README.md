@@ -16,6 +16,8 @@ API REST do projeto **Fintech (FIAP)**, construída em **Java 17 / Spring Boot 3
 
 ### 1) Configurar o Oracle
 
+#### **Aviso (Ambiente Acadêmico)**: As credenciais do Oracle usadas pela turma estão *intencionalmente versionadas no application.yml* para facilitar a correção e a execução compartilhada. Em produção, moveríamos para variáveis de ambiente/secret manager.
+
 No seu Oracle (FIAP), garanta as sequences (ajuste o `START WITH` se precisar):
 
 ```sql
